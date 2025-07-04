@@ -8,6 +8,10 @@
 #include <iostream>
 
 namespace validator {
+    #define SK_VAL_DATA_LEN 64L
+
+    constexpr size_t MAX_DATA = SK_VAL_DATA_LEN;
+
     int sumDigits(int n);
     int toggleMultiplier(int n);
 
@@ -21,8 +25,8 @@ namespace validator {
     class Validator {
     // PRIVATE -----------------------------------------------------------------
     private:
-        char data[32];
-        int digits[32];
+        char data[SK_VAL_DATA_LEN];
+        int digits[SK_VAL_DATA_LEN];
 
         [[nodiscard]] bool vetInput() const {
             for (int i = 0; i < std::strlen(data); i++) {
@@ -74,6 +78,9 @@ namespace validator {
         [[nodiscard]] char* getData() const { return const_cast<char *>(data); }
         [[nodiscard]] const int* getDigits() const { return digits; }
         [[nodiscard]] int getModulus() const { return digits[strlen(data) - 1]; }
+        void printDigits() const {
+            std::cout << "Digits: " << data << std::endl;
+        }
 
         [[nodiscard]] Result isValid() {
             if (!vetInput()) return ERR_BAD_INPUT;
@@ -82,7 +89,7 @@ namespace validator {
             std::cout << "Number of digits: " << i << std::endl;
 
             const int sum = LuhnSum();
-            int lm = (10 - (sum % 10)) % 10;
+            const int lm = (10 - (sum % 10)) % 10;
 
             std::cout << "Calculated Luhn modulus: " << lm << std::endl;
             std::cout << "Existing Luhn modulus: " << getModulus() << std::endl;

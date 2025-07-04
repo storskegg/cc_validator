@@ -10,7 +10,9 @@ int main() {
 
     cout << "Enter a string to be validated: " << endl;
 
-    cin.getline(v.getData(), 32);
+    cin.getline(v.getData(), MAX_DATA);
+
+    v.printDigits();
 
     switch (const Result v_result = v.isValid()) {
         case VALID:
