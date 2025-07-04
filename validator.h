@@ -9,7 +9,7 @@
 
 namespace validator {
     int sumDigits(int n);
-    int toggleMultiplier(const int n);
+    int toggleMultiplier(int n);
 
     enum Result {
         VALID = 0,
@@ -42,23 +42,16 @@ namespace validator {
                 digits[count++] = data[i] - '0';
             }
 
-            for (int i = 0; i < strlen(data); i++) {
-                std::cout << digits[i] << "\t" << std::endl;
-            }
-
             return count;
         }
-        int LuhnSum() {
+        [[nodiscard]] int LuhnSum() const {
             int sum = 0;
 
-            int last = static_cast<int>(strlen(data)) - 1;
+            const int last = static_cast<int>(strlen(data)) - 1;
             int currentMultiplier = toggleMultiplier(0);
 
             for (int i = last-1; i >= 0; i--) {
                 sum += sumDigits(digits[i] * currentMultiplier);
-                std::cout << "== Mult...." << currentMultiplier << std::endl;
-                std::cout << "== Digit..." << digits[i] << std::endl;
-                std::cout << "== Sum....." << sum << std::endl;
                 currentMultiplier = toggleMultiplier(currentMultiplier);
             }
 
@@ -80,6 +73,7 @@ namespace validator {
 
         [[nodiscard]] char* getData() const { return const_cast<char *>(data); }
         [[nodiscard]] const int* getDigits() const { return digits; }
+        [[nodiscard]] int getModulus() const { return digits[strlen(data) - 1]; }
 
         [[nodiscard]] Result isValid() {
             if (!vetInput()) return ERR_BAD_INPUT;
@@ -88,8 +82,10 @@ namespace validator {
             std::cout << "Number of digits: " << i << std::endl;
 
             const int sum = LuhnSum();
-
             int lm = (10 - (sum % 10)) % 10;
+
+            std::cout << "Calculated Luhn modulus: " << lm << std::endl;
+            std::cout << "Existing Luhn modulus: " << getModulus() << std::endl;
 
             if (lm != digits[strlen(data) - 1]) return INVALID;
 
