@@ -12,16 +12,17 @@ int main() {
 
     cin.getline(v.getData(), 32);
 
-    cout << "Length of the string: " << strlen(v.getData()) << endl;
-
-    cout << "----[ Print ]-----------------------" << endl;
-    v.print();
-
-    cout << "----[ Vet Input ]--------------------" << endl;
-    if (v.vetInput()) {
-        cout << "Input is valid." << endl;
-    } else {
-        cout << "Input is not valid." << endl;
+    switch (v.isValid()) {
+        case VALID:
+            cout << "Input is valid." << endl;
+            break;
+        case INVALID:
+            cout << "Input is not valid." << endl;
+            break;
+        case ERR_BAD_INPUT:
+            cout << "Input contains invalid characters." << endl;
+            break;
+        // Add more cases as needed
     }
 
     return 0;
