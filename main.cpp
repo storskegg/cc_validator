@@ -6,13 +6,13 @@ using namespace validator;
 
 
 int main() {
-    const Validator v{};
+    Validator v{};
 
     cout << "Enter a string to be validated: " << endl;
 
     cin.getline(v.getData(), 32);
 
-    switch (v.isValid()) {
+    switch (const Result v_result = v.isValid()) {
         case VALID:
             cout << "Input is valid." << endl;
             break;

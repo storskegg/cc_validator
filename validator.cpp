@@ -13,4 +13,12 @@ namespace validator {
         }
         return sum;
     }
+
+    int toggleMultiplier(const int n) {
+        if (n == 2) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
 } // validator

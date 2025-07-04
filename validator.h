@@ -9,6 +9,7 @@
 
 namespace validator {
     int sumDigits(int n);
+    int toggleMultiplier(const int n);
 
     enum Result {
         VALID = 0,
@@ -24,51 +25,73 @@ namespace validator {
         int digits[32];
 
         [[nodiscard]] bool vetInput() const {
-            bool isValid = true;
-
             for (int i = 0; i < std::strlen(data); i++) {
                 if (data[i] == ' ') continue;
 
-                isValid = std::isdigit(data[i]);
-                if (!isValid) {
-                    break;
+                if (!std::isdigit(data[i])) {
+                    return false;
                 }
             }
 
-            return isValid;
+            return true;
         }
-        int fillDigits() {
+        [[nodiscard]] int fillDigits() {
             int count = 0;
+
             for (int i = 0; i < strlen(data); i++) {
-                digits[i] = static_cast<int>(strtol((const char *) &data[i], nullptr, 10));
-                count++;
+                digits[count++] = data[i] - '0';
             }
+
             for (int i = 0; i < strlen(data); i++) {
                 std::cout << digits[i] << "\t" << std::endl;
             }
+
             return count;
+        }
+        int LuhnSum() {
+            int sum = 0;
+
+            int last = static_cast<int>(strlen(data)) - 1;
+            int currentMultiplier = toggleMultiplier(0);
+
+            for (int i = last-1; i >= 0; i--) {
+                sum += sumDigits(digits[i] * currentMultiplier);
+                std::cout << "== Mult...." << currentMultiplier << std::endl;
+                std::cout << "== Digit..." << digits[i] << std::endl;
+                std::cout << "== Sum....." << sum << std::endl;
+                currentMultiplier = toggleMultiplier(currentMultiplier);
+            }
+
+            return sum;
         }
 
     // PUBLIC ------------------------------------------------------------------
     public:
         Validator() : data(), digits() {
             data[0] = '\0';
-            for (int & digit : digits) {
-                digit = 0;
-            }
+            std::fill(std::begin(digits), std::end(digits), 0);
         };
         explicit Validator(const char* _data) : data(), digits() {
-            strcpy(data, _data);
+            std::strncpy(data, _data, sizeof(data)-1);
+            data[sizeof(data)-1] = '\0';
+            std::fill(std::begin(digits), std::end(digits), 0);
         };
         ~Validator() = default;
 
         [[nodiscard]] char* getData() const { return const_cast<char *>(data); }
+        [[nodiscard]] const int* getDigits() const { return digits; }
 
-        [[nodiscard]] Result isValid() const {
+        [[nodiscard]] Result isValid() {
             if (!vetInput()) return ERR_BAD_INPUT;
 
             const int i = fillDigits();
             std::cout << "Number of digits: " << i << std::endl;
+
+            const int sum = LuhnSum();
+
+            int lm = (10 - (sum % 10)) % 10;
+
+            if (lm != digits[strlen(data) - 1]) return INVALID;
 
             return VALID;
         }
