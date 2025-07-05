@@ -88,15 +88,12 @@ namespace validator {
     // PUBLIC ------------------------------------------------------------------
     public:
         // Constructors and Destructor
-        Validator() : data(), digits() {
-            data[0] = '\0';
+        explicit Validator(const char* _data) : data(), digits() {
+            std::strncpy(data, _data, sizeof(data)-1);
+            data[sizeof(data)-1] = '\0';
             std::fill(std::begin(digits), std::end(digits), 0);
         }
-        // explicit Validator(const char* _data) : data(), digits() {
-        //     std::strncpy(data, _data, sizeof(data)-1);
-        //     data[sizeof(data)-1] = '\0';
-        //     std::fill(std::begin(digits), std::end(digits), 0);
-        // }
+        Validator() : Validator("") {}
         ~Validator() = default;
 
         // Class Methods
