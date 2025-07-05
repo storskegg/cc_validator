@@ -98,7 +98,6 @@ namespace validator {
 
         // Class Methods
         [[nodiscard]] char* getData() const { return const_cast<char *>(data); }
-        [[nodiscard]] const int* getDigits() const { return digits; }
         [[nodiscard]] int getModulus() const { return digits[strlen(data) - 1]; }
 
         void printDigits() const {
@@ -123,7 +122,7 @@ namespace validator {
             const int lm = (10 - (sum % 10)) % 10;
 
             std::cout << "Calculated Luhn modulus: " << lm << std::endl;
-            std::cout << "Existing Luhn modulus: " << getModulus() << std::endl;
+            std::cout << "Existing Luhn modulus:   " << getModulus() << std::endl;
 
             if (lm != digits[strlen(data) - 1]) return INVALID;
 
