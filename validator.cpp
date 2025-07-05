@@ -12,7 +12,7 @@ namespace validator {
             n /= 10;
         }
         return sum;
-    }
+    } // sumDigits()
 
     int toggleMultiplier(const int n) {
         if (n == 2) {
@@ -20,5 +20,5 @@ namespace validator {
         } else {
             return 2;
         }
-    }
+    } // toggleMultiplier()
 } // validator

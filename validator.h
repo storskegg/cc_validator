@@ -8,17 +8,16 @@
 #include <iostream>
 
 namespace validator {
-    #define SK_VAL_DATA_LEN 64L
-
+    #define SK_VAL_DATA_LEN 64L // Maximum length of input data
     constexpr size_t MAX_DATA = SK_VAL_DATA_LEN;
 
     int sumDigits(int n);
     int toggleMultiplier(int n);
 
     enum Result {
-        VALID = 0,
-        INVALID = 1,
-        ERR_BAD_INPUT = 2,
+        VALID = 0, // Input passes Luhn algorithm
+        INVALID = 1, // Input fails Luhn algorithm
+        ERR_BAD_INPUT = 2, // Input contains invalid characters
         // Add more results as needed
     };
 
@@ -28,7 +27,13 @@ namespace validator {
         char data[SK_VAL_DATA_LEN];
         int digits[SK_VAL_DATA_LEN];
 
-        [[nodiscard]] bool vetInput() const {
+    /**
+     * vetInput() vets the input data's integrity. At present, only digits and
+     * spaces (ASCII 0x20) are allowed.
+     *
+     * @return boolean indicating whether the input data is clean/valid.
+     */
+    [[nodiscard]] bool vetInput() const {
             for (int i = 0; i < std::strlen(data); i++) {
                 if (data[i] == ' ') continue;
 
@@ -38,17 +43,35 @@ namespace validator {
             }
 
             return true;
-        }
-        [[nodiscard]] int fillDigits() {
+        } // vetInput()
+
+    /**
+     * fillDigits() reads input from the data[] array, and populates the
+     * digits[] array using only the valid digits. (This accounts for the use
+     * of spaces in, say, a credit card number.)
+     *
+     * @return Count of the number of values updated in the digits[] array.
+     */
+    [[nodiscard]] int fillDigits() {
             int count = 0;
 
             for (int i = 0; i < strlen(data); i++) {
+                if (!std::isdigit(data[i])) continue;
                 digits[count++] = data[i] - '0';
             }
 
             return count;
-        }
-        [[nodiscard]] int LuhnSum() const {
+        } // fillDigits()
+
+    /**
+     * LuhnSum performs the sumative portion of the Luhn algorithm based on the
+     * values of the digits[] array. Starting at the second to last valid number,
+     * the first number is multiplied by 2, the second by 1, and so on; and
+     * the products are added together. This sum is then returned.
+     *
+     * @return Luhn sum of the digits (see Luhn algorithm)
+     */
+    [[nodiscard]] int LuhnSum() const {
             int sum = 0;
 
             const int last = static_cast<int>(strlen(data)) - 1;
@@ -60,29 +83,40 @@ namespace validator {
             }
 
             return sum;
-        }
+        } // LuhnSum()
 
     // PUBLIC ------------------------------------------------------------------
     public:
+        // Constructors and Destructor
         Validator() : data(), digits() {
             data[0] = '\0';
             std::fill(std::begin(digits), std::end(digits), 0);
-        };
-        explicit Validator(const char* _data) : data(), digits() {
-            std::strncpy(data, _data, sizeof(data)-1);
-            data[sizeof(data)-1] = '\0';
-            std::fill(std::begin(digits), std::end(digits), 0);
-        };
+        }
+        // explicit Validator(const char* _data) : data(), digits() {
+        //     std::strncpy(data, _data, sizeof(data)-1);
+        //     data[sizeof(data)-1] = '\0';
+        //     std::fill(std::begin(digits), std::end(digits), 0);
+        // }
         ~Validator() = default;
 
+        // Class Methods
         [[nodiscard]] char* getData() const { return const_cast<char *>(data); }
         [[nodiscard]] const int* getDigits() const { return digits; }
         [[nodiscard]] int getModulus() const { return digits[strlen(data) - 1]; }
+
         void printDigits() const {
             std::cout << "Digits: " << data << std::endl;
-        }
+        } // printDigits()
 
-        [[nodiscard]] Result isValid() {
+    /**
+     * isValid() first vets the input data's integrity, then fills the digits[]
+     * array, and finally performs the Luhn algorithm to determine if the
+     * given number is valid or not. Both the given and calculated Luhn modulus
+     * are displayed for verification purposes.
+     *
+     * @return Result indicating whether the input data is valid (VALID) or not
+     */
+    [[nodiscard]] Result isValid() {
             if (!vetInput()) return ERR_BAD_INPUT;
 
             const int i = fillDigits();
@@ -97,7 +131,7 @@ namespace validator {
             if (lm != digits[strlen(data) - 1]) return INVALID;
 
             return VALID;
-        }
+        } // isValid()
     }; // class Validator
 
 } // namespace validator

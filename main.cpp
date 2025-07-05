@@ -4,17 +4,27 @@
 using namespace std;
 using namespace validator;
 
-
+ /**
+ * Main thread.
+ *
+ * The user is first prompted to enter a number string, which is then printed
+ * to console for verification (mostly to show whether the input was truncated).
+ * The input is then validated using the Luhn algorithm, and the results
+ * displayed.
+ *
+ * @return the Result from the validation process. (0 success, 1 invalid, etc.))
+ */
 int main() {
-    Validator v{};
+    const auto v = new Validator();
 
     cout << "Enter a string to be validated: " << endl;
 
-    cin.getline(v.getData(), MAX_DATA);
+    cin.getline(v->getData(), MAX_DATA);
 
-    v.printDigits();
+    v->printDigits();
 
-    switch (const Result v_result = v.isValid()) {
+    const Result v_result = v->isValid();
+    switch (v_result) {
         case VALID:
             cout << "Input is valid." << endl;
             break;
@@ -27,5 +37,5 @@ int main() {
         // Add more cases as needed
     }
 
-    return 0;
+    return v_result;
 }
