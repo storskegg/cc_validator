@@ -1,3 +1,0 @@
-/Users/liam/CLionProjects/cc_validator/CMakeFiles/cc_validator.dir
-/Users/liam/CLionProjects/cc_validator/CMakeFiles/edit_cache.dir
-/Users/liam/CLionProjects/cc_validator/CMakeFiles/rebuild_cache.dir
