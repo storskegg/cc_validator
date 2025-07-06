@@ -35,5 +35,14 @@ on the 1-liners as much as possible.)
 
 ## TODO
 
-Detect CLI params and piped input, and work accordingly. I also want data truncation detection with warning to the user.
+- [ ] Detect CLI params and piped input, and work accordingly. I also want data truncation detection with warning to the
+      user.
+- [ ] Have a cli flag that stands it up as a microservice, exposing the following APIs:
+  - [ ] REST endpoint: accepts plaintext numerical string for validation
+  - [ ] REST endpoint: accepts json object containing numerical string for validation
+  - [ ] gRPC endpoint: accepts a protocol buffer or similar style marshaling of a numerical string for validation
+  - [ ] CGI endpoint: accepts XML arg--I'm just kidding. I'm not going to do this.
+- [ ] Unit tests! Inspired by [Manu Sánchez's CppCon presentation](https://www.youtube.com/watch?v=8adO3fN1Igg) on the 
+      use of static reflection in unit tests, I figure I'll explore his `tinyrefl` [library](https://github.com/Manu343726/tinyrefl),
+      and see wat do. That said, it looks like it was last updated 6 years ago, and listed as WiP, so...we'll see.
 
