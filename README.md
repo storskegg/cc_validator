@@ -5,7 +5,7 @@
 This is a CLI implementation of the Luhn algorithm, used to validate credit card numbers, as well as many other types of
 numerical strings. You can check out the details over on [Wikipedia](https://en.wikipedia.org/wiki/Luhn_algorithm).
 
-## Why?
+## Why? (C++)
 
 I've long described my C/C++ as "functional, but not amazing," and I want to change that. This is my first project to
 hone my C++ skills towards being hire-worthy, and accomplishes this in the following ways:
@@ -27,13 +27,17 @@ hone my C++ skills towards being hire-worthy, and accomplishes this in the follo
     copy. (Unrelated, I explicitly fill `digits[]` with zeros, because that's how I like to roll. No random data
     surprises.)
 
-## Style
+## Why? (Rust)
+
+I've also been wanting to cut my teeth on Rust, so I've decided that this would be a good place to start.
+
+## Style (C++)
 
 The code style in this project is a little different than what you'd find in, say, my Go. I've aimed to be concise, but
 readable...unlike, say, my old Perl days, which was concise, and is Perl ever readable? (Mine was, but I definitely laid
 on the 1-liners as much as possible.)
 
-## TODO
+## TODO (General)
 
 - [ ] Detect CLI params and piped input, and work accordingly. I also want data truncation detection with warning to the
       user.
