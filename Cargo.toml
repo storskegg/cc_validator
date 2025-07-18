@@ -2,5 +2,14 @@
 name = "cc_validator"
 version = "0.1.0"
 edition = "2024"
+authors = ["Liam Conrad <liam@w4pho.net>"]
+
+[lib]
+name = "luhn"
+path = "src/lib/luhn/lib.rs"
+
+[[bin]]
+name = "cc_validator"
+path = "src/bin/main.rs"
 
 [dependencies]
