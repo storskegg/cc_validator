@@ -1,6 +1,3 @@
-use std::error::Error;
-use std::str::Chars;
-
 pub enum LuhnResult {
     Valid,
     Invalid,
@@ -36,7 +33,7 @@ pub fn validate(data: &str) -> Result<LuhnResult, ErrorBadInput> {
     let mut current_multiplier = toggle_multiplier(0);
     let mut sum = 0;
 
-    for (i, digit) in intermediary.digits.iter().enumerate() {
+    for (_, digit) in intermediary.digits.iter().enumerate() {
         sum += sum_digits(digit * current_multiplier);
         current_multiplier = toggle_multiplier(current_multiplier);
     }
@@ -71,7 +68,7 @@ fn massage_input_string(data: &str) -> String {
 struct LuhnIntermediary {
     parity_digit: i32,
     digits: Vec<i32>,
-    data: String,
+    _data: String,
 }
 
 impl LuhnIntermediary {
@@ -103,7 +100,7 @@ impl LuhnIntermediary {
         Ok(LuhnIntermediary {
             parity_digit,
             digits,
-            data: incoming_str,
+            _data: incoming_str,
         })
     }
 }
