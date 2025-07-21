@@ -10,15 +10,16 @@ pub enum LuhnResult {
 pub const MAX_DATA: usize = 64;
 
 // TODO: Return Result<LuhnResult, ErrType>
-pub fn validate(data: &str) -> LuhnResult {
+pub fn validate(data: &str) -> Result<LuhnResult, ErrorBadInput> {
     let mut local_data: String = data.to_string();
     local_data.truncate(MAX_DATA);
 
-    let mut parity_digit = -1;
-    let mut digits: Vec<i32> = {
-        let mut v = Vec::with_capacity(local_data.len()-1);
-
+    let i_res = LuhnIntermediary::new(local_data.as_str());
+    if i_res.is_err() {
+        return Err(i_res.err().unwrap())
     }
+
+    let intermediary = i_res?;
 
     let mut last_multiplier = 1;
     let mut sum = 0;
@@ -30,11 +31,11 @@ pub fn validate(data: &str) -> LuhnResult {
 
         let digit = c.to_digit(10);
         if digit.is_none() {
-            return LuhnResult::ErrBadInput;
+            return Err(ErrorBadInput);
         }
     }
 
-    LuhnResult::Valid
+    Ok(LuhnResult::Valid)
 }
 
 struct ErrorBadInput;
@@ -43,11 +44,6 @@ impl std::fmt::Display for ErrorBadInput {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "Bad input: numerical string contains unsupported characters")
     }
-}
-
-struct LuhnIntermediary {
-    parity_digit: i32,
-    digits: Vec<i32>,
 }
 
 fn get_parity_digit(data: &str) -> Result<i32, ErrorBadInput> {
@@ -61,6 +57,17 @@ fn get_parity_digit(data: &str) -> Result<i32, ErrorBadInput> {
 
 fn massage_input_string(data: &str) -> String {
     data.to_string().trim().get(..MAX_DATA).unwrap().to_string()
+}
+
+/**
+ * LuhnIntermediary is a struct that holds the numerical data and parity digit of the input string.
+ * The digits are stored in reverse order, allowing for conventional iteration when the summing
+ * process begins.
+ */
+struct LuhnIntermediary {
+    parity_digit: i32,
+    digits: Vec<i32>,
+    data: String,
 }
 
 impl LuhnIntermediary {
@@ -85,6 +92,7 @@ impl LuhnIntermediary {
         Ok(LuhnIntermediary {
             parity_digit,
             digits,
+            data: incoming_str,
         })
     }
 }
