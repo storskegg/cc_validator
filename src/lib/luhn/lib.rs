@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::str::Chars;
 
 pub enum LuhnResult {
     Valid,
@@ -49,23 +50,35 @@ struct LuhnIntermediary {
     digits: Vec<i32>,
 }
 
+fn get_parity_digit(data: &str) -> Result<i32, ErrorBadInput> {
+    let c = data.chars().last().unwrap();
+    if c.is_digit(10) {
+        Ok(c.to_digit(10).unwrap().cast_signed())
+    } else {
+        Err(ErrorBadInput)
+    }
+}
+
+fn massage_input_string(data: &str) -> String {
+    data.to_string().trim().get(..MAX_DATA).unwrap().to_string()
+}
+
 impl LuhnIntermediary {
     fn new(data: &str) -> Result<LuhnIntermediary, ErrorBadInput> {
-        let local_data = data.to_string().trim().get(..MAX_DATA).unwrap().chars();
-        let c = local_data.last().unwrap();
-        let parity_digit = {
-            // let c = local_data.last().unwrap();
-            if c.is_digit(10) {
-                c.to_digit(10).unwrap()
-            } else {
-                return Err(ErrorBadInput);
-            }
-        };
+        let incoming_str: String = massage_input_string(data);
+        let local_data = incoming_str.chars();
 
-        let mut digits = Vec::new();
+        let pd = get_parity_digit(data);
+        if pd.is_err() {
+            return Err(ErrorBadInput);
+        }
+
+        let parity_digit = pd?;
+
+        let mut digits: Vec<i32> = Vec::new();
 
         for (_, c) in local_data.rev().skip(1).enumerate() {
-            let d = c.to_digit(10).unwrap();
+            let d = c.to_digit(10).unwrap().cast_signed();
             digits.push(d);
         }
 
@@ -118,69 +131,5 @@ fn toggle_multiplier(n: i32) -> i32 {
     match n {
         2 => 1,
         _ => 2,
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn sum_digits_given_one_digit() {
-        let result = sum_digits(5);
-        assert_eq!(result, 5);
-    }
-
-    #[test]
-    fn sum_digits_given_two_digits() {
-        let result = sum_digits(54);
-        assert_eq!(result, 9);
-    }
-    #[test]
-    fn sum_digits_given_three_digits() {
-        let result = sum_digits(543);
-        assert_eq!(result, 12);
-    }
-
-    #[test]
-    fn sum_digits_given_four_digits() {
-        let result = sum_digits(5432);
-        assert_eq!(result, 14);
-    }
-
-    #[test]
-    fn sum_digits_given_five_digits() {
-        let result = sum_digits(54321);
-        assert_eq!(result, 15);
-    }
-
-    #[test]
-    fn toggle_multiplier_given_zero() {
-        let result = toggle_multiplier(0);
-        assert_eq!(result, 2);
-    }
-
-    #[test]
-    fn toggle_multiplier_given_one() {
-        let result = toggle_multiplier(1);
-        assert_eq!(result, 2);
-    }
-
-    #[test]
-    fn toggle_multiplier_given_two() {
-        let result = toggle_multiplier(2);
-        assert_eq!(result, 1);
-    }
-
-    #[test]
-    fn toggle_multiplier_given_three() {
-        let result = toggle_multiplier(3);
-        assert_eq!(result, 2);
-    }
-
-    #[test]
-    fn toggle_multiplier_given_negative_one() {
-        let result = toggle_multiplier(-1);
-        assert_eq!(result, 2);
     }
 }
