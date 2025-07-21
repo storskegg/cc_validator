@@ -21,24 +21,22 @@ pub fn validate(data: &str) -> Result<LuhnResult, ErrorBadInput> {
 
     let intermediary = i_res?;
 
-    let mut last_multiplier = 1;
+    let mut current_multiplier = toggle_multiplier(0);
     let mut sum = 0;
 
-    for (i, c) in d.chars().rev().enumerate() {
-        if c.is_whitespace() || c == '-' {
-            continue;
-        }
+    for (i, digit) in intermediary.digits.iter().enumerate() {
+        sum += sum_digits(digit * current_multiplier);
+    }
 
-        let digit = c.to_digit(10);
-        if digit.is_none() {
-            return Err(ErrorBadInput);
-        }
+    let lm = (10 - (sum % 10)) % 10;
+    if lm != intermediary.parity_digit {
+        return Ok(LuhnResult::Invalid);
     }
 
     Ok(LuhnResult::Valid)
 }
 
-struct ErrorBadInput;
+pub struct ErrorBadInput;
 
 impl std::fmt::Display for ErrorBadInput {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -85,6 +83,13 @@ impl LuhnIntermediary {
         let mut digits: Vec<i32> = Vec::new();
 
         for (_, c) in local_data.rev().skip(1).enumerate() {
+            // ignore whitespace and hyphens
+            if c.is_whitespace() || c == '-' {
+                continue;
+            }
+            if !c.is_digit(10) {
+                return Err(ErrorBadInput);
+            }
             let d = c.to_digit(10).unwrap().cast_signed();
             digits.push(d);
         }
@@ -97,32 +102,7 @@ impl LuhnIntermediary {
     }
 }
 
-fn vec_from_str(s: &str) -> Result<LuhnIntermediary, ErrorBadInput> {
-    let parity_digit = -1;
-    let mut v = Vec::with_capacity(MAX_DATA - 1);
-
-
-
-
-    for (i, c) in s.chars().rev().enumerate() {
-        if c.is_whitespace() || c == '-' {
-            continue;
-        }
-
-        let digit = c.to_digit(10);
-        if digit.is_none() {
-            return Err(ErrorBadInput);
-        }
-
-        v.push(digit.unwrap());
-    }
-
-    return Ok(LuhnIntermediary {
-        parity_digit,
-        digits: v,
-    })
-}
-
+////////////////////////////////////////////////
 
 
 fn sum_digits(n: i32) -> i32 {
