@@ -1,7 +1,24 @@
 pub enum LuhnResult {
     Valid,
     Invalid,
-    ErrBadInput,
+}
+
+impl std::fmt::Display for LuhnResult {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            LuhnResult::Valid => write!(f, "Valid"),
+            LuhnResult::Invalid => write!(f, "Invalid"),
+        }
+    }
+}
+
+impl std::fmt::Debug for LuhnResult {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            LuhnResult::Valid => write!(f, "[0] Valid Kuhn Checksum; File {}, Line {}", file!(), line!()),
+            LuhnResult::Invalid => write!(f, "[1] Invalid Kuhn Checksum; File {}, Line {}", file!(), line!()),
+        }
+    }
 }
 
 // MAX_DATA is the maximum number of characters in the input string that we will handle
@@ -16,6 +33,11 @@ impl std::fmt::Display for ErrorBadInput {
     }
 }
 
+impl std::fmt::Debug for ErrorBadInput {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Input contains unsupported characters; File {}, Line {}", file!(), line!())
+    }
+}
 
 // validate performs the complete Luhn validation process. Unlike the C++ implementation in
 // this codebase, we handle this as a simple function, versus an instantiatable class.
