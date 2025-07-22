@@ -6,7 +6,7 @@ authors = ["Liam Conrad <liam@w4pho.net>"]
 
 [lib]
 name = "luhn"
-path = "src/lib/luhn/lib.rs"
+path = "src/lib/luhn/mod.rs"
 
 [[bin]]
 name = "cc_validator"

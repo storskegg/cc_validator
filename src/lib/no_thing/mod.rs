@@ -1,0 +1,3 @@
+mod no_thing {
+
+}

@@ -1,7 +1,7 @@
 // insert a file comment here
 
-use std::io::{self};
-use luhn::{self};
+use std::io;
+use luhn;
 
 fn main() {
     let mut buf = String::with_capacity(luhn::MAX_DATA);

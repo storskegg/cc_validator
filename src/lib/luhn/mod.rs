@@ -1,10 +1,14 @@
+mod tests;
+
+use std::fmt;
+
 pub enum LuhnResult {
     Valid,
     Invalid,
 }
 
-impl std::fmt::Display for LuhnResult {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl fmt::Display for LuhnResult {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             LuhnResult::Valid => write!(f, "Valid"),
             LuhnResult::Invalid => write!(f, "Invalid"),
@@ -12,8 +16,8 @@ impl std::fmt::Display for LuhnResult {
     }
 }
 
-impl std::fmt::Debug for LuhnResult {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl fmt::Debug for LuhnResult {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             LuhnResult::Valid => write!(f, "[0] Valid Kuhn Checksum; File {}, Line {}", file!(), line!()),
             LuhnResult::Invalid => write!(f, "[1] Invalid Kuhn Checksum; File {}, Line {}", file!(), line!()),
@@ -27,14 +31,14 @@ pub const MAX_DATA: usize = 64;
 // ErrorBadInput is a custom error type for when we come across unsupported characters
 pub struct ErrorBadInput;
 
-impl std::fmt::Display for ErrorBadInput {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl fmt::Display for ErrorBadInput {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Bad input: numerical string contains unsupported characters")
     }
 }
 
-impl std::fmt::Debug for ErrorBadInput {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl fmt::Debug for ErrorBadInput {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Input contains unsupported characters; File {}, Line {}", file!(), line!())
     }
 }
@@ -70,6 +74,8 @@ pub fn validate(data: &str) -> Result<LuhnResult, ErrorBadInput> {
     Ok(LuhnResult::Valid)
 }
 
+// Private from here on
+
 fn get_parity_digit(data: &str) -> Result<i32, ErrorBadInput> {
     let c = data.chars().last().unwrap();
     if c.is_digit(10) {
@@ -84,7 +90,6 @@ fn get_parity_digit(data: &str) -> Result<i32, ErrorBadInput> {
 fn massage_input_string(data: &str) -> String {
     let mut tmp_trim: String = data.to_string().trim().to_string();
     tmp_trim.truncate(MAX_DATA);
-    //.get(..MAX_DATA)
     return tmp_trim.to_string()
 }
 
@@ -93,8 +98,8 @@ fn massage_input_string(data: &str) -> String {
 // string. The digits are stored in reverse order, allowing for conventional iteration when the
 // summing process begins.
 struct LuhnIntermediary {
-    parity_digit: i32,
-    digits: Vec<i32>,
+    pub parity_digit: i32,
+    pub digits: Vec<i32>,
     _data: String,
 }
 
@@ -131,9 +136,6 @@ impl LuhnIntermediary {
         })
     }
 }
-
-////////////////////////////////////////////////
-
 
 // sum_digits calculates the sum of the digits in a given number. (e.g. 13 = 4)
 fn sum_digits(n: i32) -> i32 {
