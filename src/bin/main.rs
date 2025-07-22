@@ -5,26 +5,21 @@ use luhn::{self};
 
 fn main() {
     let mut buf = String::with_capacity(luhn::MAX_DATA);
-    println!("Enter a credit card number:");
+    println!("Enter a string to be validated:");
     let _ = io::stdin().read_line(&mut buf).unwrap();
     buf = buf.trim().to_string();
     let num_read = buf.chars().count();
 
-    println!("You entered [{}]: '{}'", num_read, buf.trim());
+    println!("Digits: {}", buf.trim());
+    println!("Number of digits: {}", num_read);
 
-    let v1str = "2345";
-    let v1r = luhn::validate(v1str);
-    if v1r.is_err() {
-        println!("Error: {}", v1r.err().unwrap());
+    let vr = luhn::validate(&buf);
+    if vr.is_err() {
+        println!("Input contains invalid characters.");
         return;
     }
-    println!("Result ['{}']: {}", v1str, v1r.unwrap());
-
-    let v2str = "12345";
-    let v2r = luhn::validate(v2str);
-    if v2r.is_err() {
-        println!("Error: {}", v2r.err().unwrap());
-        return;
+    match vr.unwrap() {
+        luhn::LuhnResult::Valid => println!("Input is valid."),
+        luhn::LuhnResult::Invalid => println!("Input is not valid."),
     }
-    println!("Result ['{}']: {}", v2str, v2r.unwrap());
 }

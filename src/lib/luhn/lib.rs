@@ -61,6 +61,8 @@ pub fn validate(data: &str) -> Result<LuhnResult, ErrorBadInput> {
     }
 
     let lm = (10 - (sum % 10)) % 10;
+    println!("Calculated Luhn modulus: {}", lm);
+    println!("Existing Luhn modulus: {}", intermediary.parity_digit);
     if lm != intermediary.parity_digit {
         return Ok(LuhnResult::Invalid);
     }
@@ -80,7 +82,10 @@ fn get_parity_digit(data: &str) -> Result<i32, ErrorBadInput> {
 // massage_input_string trims the input string, truncates it to MAX_DATA, and returns the result as
 // a string.
 fn massage_input_string(data: &str) -> String {
-    data.to_string().trim().get(..MAX_DATA).unwrap().to_string()
+    let mut tmp_trim: String = data.to_string().trim().to_string();
+    tmp_trim.truncate(MAX_DATA);
+    //.get(..MAX_DATA)
+    return tmp_trim.to_string()
 }
 
 
