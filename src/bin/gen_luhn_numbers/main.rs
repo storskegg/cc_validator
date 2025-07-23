@@ -16,6 +16,8 @@ fn main() {
     println!("Start   = '{: >16}'", start_number);
 
     for i in 0..QTY_NUMBERS {
+        // TODO: implement dynamic padding given u128 (probably unsafe)
+        // learned dynamic padding here: https://stackoverflow.com/questions/69067436/how-do-i-make-the-fill-padding-in-stdformat-dynamic
         println!("i       = '{: >16}'", i);
         let from = start_number + i;
         println!("from    = '{: >16}'", from);
