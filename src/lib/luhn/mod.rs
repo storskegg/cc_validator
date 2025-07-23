@@ -43,28 +43,37 @@ impl fmt::Debug for ErrorBadInput {
     }
 }
 
+pub fn calculate_modulus(data: &str) -> i32 {
+    let intermediary = new_luhn_intermediary(data, false);
+    intermediary.unwrap().calculate_modulus()
+}
+
+pub fn calculate_modulus_with_u128(data: u128) -> i32 {
+    let intermediary = new_luhn_intermediary_with_u128(data, false);
+    intermediary.unwrap().calculate_modulus()
+}
+
+pub fn validate_with_u64(data: u64) -> i32 {
+    let intermediary = new_luhn_intermediary_with_u64(data, false);
+    intermediary.unwrap().calculate_modulus()
+}
+
+
 // validate performs the complete Luhn validation process. Unlike the C++ implementation in
 // this codebase, we handle this as a simple function, versus an instantiatable class.
 pub fn validate(data: &str) -> Result<LuhnResult, ErrorBadInput> {
-    let mut local_data: String = data.to_string();
-    local_data.truncate(MAX_DATA);
+    // Let's keep mutability within the scope of the block, and not pass it on through the rest of
+    // the function.
+    let local_data: String = {
+        let mut local_data: String = data.to_string();
+        local_data.truncate(MAX_DATA);
+        local_data
+    };
 
-    let i_res = LuhnIntermediary::new(local_data.as_str());
-    if i_res.is_err() {
-        return Err(i_res.err().unwrap())
-    }
+    let intermediary = new_luhn_intermediary(local_data.as_str(), true)?;
 
-    let intermediary = i_res?;
+    let lm: i32 = intermediary.calculate_modulus();
 
-    let mut current_multiplier = toggle_multiplier(0);
-    let mut sum = 0;
-
-    for (_, digit) in intermediary.digits.iter().enumerate() {
-        sum += sum_digits(digit * current_multiplier);
-        current_multiplier = toggle_multiplier(current_multiplier);
-    }
-
-    let lm = (10 - (sum % 10)) % 10;
     println!("Calculated Luhn modulus: {}", lm);
     println!("Existing Luhn modulus: {}", intermediary.parity_digit);
     if lm != intermediary.parity_digit {
@@ -104,7 +113,7 @@ struct LuhnIntermediary {
 }
 
 impl LuhnIntermediary {
-    fn new(data: &str) -> Result<LuhnIntermediary, ErrorBadInput> {
+    fn new(data: &str, skip: bool) -> Result<LuhnIntermediary, ErrorBadInput> {
         let incoming_str: String = massage_input_string(data);
         let local_data = incoming_str.chars();
 
@@ -117,7 +126,9 @@ impl LuhnIntermediary {
 
         let mut digits: Vec<i32> = Vec::new();
 
-        for (_, c) in local_data.rev().skip(1).enumerate() {
+        let skip: usize = if skip { 1 } else { 0 };
+
+        for (_, c) in local_data.rev().skip(skip).enumerate() {
             // ignore whitespace and hyphens
             if c.is_whitespace() || c == '-' {
                 continue;
@@ -135,6 +146,36 @@ impl LuhnIntermediary {
             _data: incoming_str,
         })
     }
+
+    pub fn calculate_modulus(&self) -> i32 {
+        let mut sum = 0;
+        let mut current_multiplier = toggle_multiplier(0);
+
+        for (_, digit) in self.digits.iter().enumerate() {
+            sum += sum_digits(digit * current_multiplier);
+            current_multiplier = toggle_multiplier(current_multiplier);
+        }
+
+        (10 - (sum % 10)) % 10
+    }
+}
+
+// new_luhn_intermediary is a private function that creates a new LuhnIntermediary from a given
+// input string. It returns a Result containing the LuhnIntermediary, or an ErrorBadInput if the
+// input string contains unsupported characters. It is functionally equivalent to
+// LuhnIntermediary::new, but use this instead.
+fn new_luhn_intermediary(data: &str, skip: bool) -> Result<LuhnIntermediary, ErrorBadInput> {
+    LuhnIntermediary::new(data, skip)
+}
+
+fn new_luhn_intermediary_with_u64(data: u64, skip: bool) -> Result<LuhnIntermediary, ErrorBadInput> {
+    let s: String = data.to_string();
+    new_luhn_intermediary(&s, skip)
+}
+
+fn new_luhn_intermediary_with_u128(data: u128, skip: bool) -> Result<LuhnIntermediary, ErrorBadInput> {
+    let s: String = data.to_string();
+    new_luhn_intermediary(&s, skip)
 }
 
 // sum_digits calculates the sum of the digits in a given number. (e.g. 13 = 4)

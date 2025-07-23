@@ -5,6 +5,11 @@
 This is a CLI implementation of the Luhn algorithm, used to validate credit card numbers, as well as many other types of
 numerical strings. You can check out the details over on [Wikipedia](https://en.wikipedia.org/wiki/Luhn_algorithm).
 
+### Note
+
+It's worth explicitly stating that the code contained in this repo is intentionally not optimized...not even slightly.
+The purpose of how the code is written is to touch many concepts in both C++ and Rust, and is therefore crufty as shit. 
+
 ## Why? (C++)
 
 I've long described my C/C++ as "functional, but not amazing," and I want to change that. This is my first project to

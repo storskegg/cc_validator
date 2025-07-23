@@ -1,3 +1,0 @@
-mod no_thing {
-
-}

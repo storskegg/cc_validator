@@ -10,6 +10,10 @@ path = "src/lib/luhn/mod.rs"
 
 [[bin]]
 name = "cc_validator"
-path = "src/bin/main.rs"
+path = "src/bin/cc_validator/main.rs"
+
+[[bin]]
+name = "gen_luhn_numbers"
+path = "src/bin/gen_luhn_numbers/main.rs"
 
 [dependencies]
