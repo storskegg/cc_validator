@@ -48,6 +48,11 @@ pub fn calculate_modulus(data: &str) -> i32 {
     intermediary.unwrap().calculate_modulus()
 }
 
+pub fn calculate_modulus_with_u64(data: u64) -> i32 {
+    let intermediary = new_luhn_intermediary_with_u64(data, false);
+    intermediary.unwrap().calculate_modulus()
+}
+
 pub fn calculate_modulus_with_u128(data: u128) -> i32 {
     let intermediary = new_luhn_intermediary_with_u128(data, false);
     intermediary.unwrap().calculate_modulus()
