@@ -1,20 +1,20 @@
 const NUM_DIGITS: u16 = 10;
-const QTY_NUMBERS: u16 = 50;
+const QTY_NUMBERS: u64 = 50;
 
 fn main() {
-    let first_digit: u16 = 4;
+    let first_digit: u64 = 4;
 
     // TODO: break the block into a function for testability and readability
-    let mult: u16 = {
+    let mult: u64 = {
         // keep mutability localized within the scope of the block.
-        let mut result: u16 = 1;
+        let mut result: u64 = 1;
         for _ in 0..(NUM_DIGITS - 2) {
             result *= 10;
         }
         result
     };
 
-    let start_number: u16 = first_digit * (mult);
+    let start_number: u64 = first_digit * (mult);
 
     println!("Start   = '{: >16}'", start_number);
 
