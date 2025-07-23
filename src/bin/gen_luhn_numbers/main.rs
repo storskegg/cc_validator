@@ -22,11 +22,16 @@ fn main() {
 
     println!("Start = '{: >width$}'", start_number, width = usize::from(NUM_DIGITS));
 
+    let mut last_number: u64 = 0;
     for i in 0..QTY_NUMBERS {
         // learned dynamic padding here: https://stackoverflow.com/questions/69067436/how-do-i-make-the-fill-padding-in-stdformat-dynamic
         let from: u64 = u64::from(start_number + i);
         let modulus: u32 = luhn::calculate_modulus_with_u64(from).cast_unsigned();
         let num: u64 = (from * 10) + u64::from(modulus);
-        println!("num   = '{: >width$}'", num, width = usize::from(NUM_DIGITS));
+        // println!("num   = '{: >width$}'", num, width = usize::from(NUM_DIGITS));
+        if i > 0 {
+            println!("delta = '{: >width$}'", num - last_number, width = usize::from(NUM_DIGITS));
+        }
+        last_number = num;
     }
 }
