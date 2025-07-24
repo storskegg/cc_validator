@@ -66,3 +66,6 @@ cmake-build-*
 # Added by cargo
 
 /target
+
+# output csv
+out.csv
