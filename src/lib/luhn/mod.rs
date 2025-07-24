@@ -43,22 +43,22 @@ impl fmt::Debug for ErrorBadInput {
     }
 }
 
-pub fn calculate_modulus(data: &str) -> i32 {
+pub fn calculate_modulus(data: &str) -> u32 {
     let intermediary = new_luhn_intermediary(data, false);
     intermediary.unwrap().calculate_modulus()
 }
 
-pub fn calculate_modulus_with_u64(data: u64) -> i32 {
+pub fn calculate_modulus_with_u64(data: u64) -> u32 {
     let intermediary = new_luhn_intermediary_with_u64(data, false);
     intermediary.unwrap().calculate_modulus()
 }
 
-pub fn calculate_modulus_with_u128(data: u128) -> i32 {
+pub fn calculate_modulus_with_u128(data: u128) -> u32 {
     let intermediary = new_luhn_intermediary_with_u128(data, false);
     intermediary.unwrap().calculate_modulus()
 }
 
-pub fn validate_with_u64(data: u64) -> i32 {
+pub fn validate_with_u64(data: u64) -> u32 {
     let intermediary = new_luhn_intermediary_with_u64(data, false);
     intermediary.unwrap().calculate_modulus()
 }
@@ -77,7 +77,7 @@ pub fn validate(data: &str) -> Result<LuhnResult, ErrorBadInput> {
 
     let intermediary = new_luhn_intermediary(local_data.as_str(), true)?;
 
-    let lm: i32 = intermediary.calculate_modulus();
+    let lm: u32 = intermediary.calculate_modulus();
 
     println!("Calculated Luhn modulus: {}", lm);
     println!("Existing Luhn modulus: {}", intermediary.parity_digit);
@@ -90,10 +90,10 @@ pub fn validate(data: &str) -> Result<LuhnResult, ErrorBadInput> {
 
 // Private from here on
 
-fn get_parity_digit(data: &str) -> Result<i32, ErrorBadInput> {
+fn get_parity_digit(data: &str) -> Result<u32, ErrorBadInput> {
     let c = data.chars().last().unwrap();
     if c.is_digit(10) {
-        Ok(c.to_digit(10).unwrap().cast_signed())
+        Ok(c.to_digit(10).unwrap())
     } else {
         Err(ErrorBadInput)
     }
@@ -104,7 +104,7 @@ fn get_parity_digit(data: &str) -> Result<i32, ErrorBadInput> {
 fn massage_input_string(data: &str) -> String {
     let mut tmp_trim: String = data.to_string().trim().to_string();
     tmp_trim.truncate(MAX_DATA);
-    return tmp_trim.to_string()
+    tmp_trim.to_string()
 }
 
 
@@ -112,8 +112,8 @@ fn massage_input_string(data: &str) -> String {
 // string. The digits are stored in reverse order, allowing for conventional iteration when the
 // summing process begins.
 struct LuhnIntermediary {
-    pub parity_digit: i32,
-    pub digits: Vec<i32>,
+    pub parity_digit: u32,
+    pub digits: Vec<u32>,
     _data: String,
 }
 
@@ -127,9 +127,9 @@ impl LuhnIntermediary {
             return Err(ErrorBadInput);
         }
 
-        let parity_digit = pd?;
+        let parity_digit: u32 = pd?;
 
-        let mut digits: Vec<i32> = Vec::new();
+        let mut digits: Vec<u32> = Vec::new();
 
         let skip: usize = if skip { 1 } else { 0 };
 
@@ -141,7 +141,7 @@ impl LuhnIntermediary {
             if !c.is_digit(10) {
                 return Err(ErrorBadInput);
             }
-            let d = c.to_digit(10).unwrap().cast_signed();
+            let d = c.to_digit(10).unwrap();
             digits.push(d);
         }
 
@@ -152,9 +152,9 @@ impl LuhnIntermediary {
         })
     }
 
-    pub fn calculate_modulus(&self) -> i32 {
-        let mut sum = 0;
-        let mut current_multiplier = toggle_multiplier(0);
+    pub fn calculate_modulus(&self) -> u32 {
+        let mut sum: u32 = 0;
+        let mut current_multiplier: u32 = toggle_multiplier(0);
 
         for (_, digit) in self.digits.iter().enumerate() {
             sum += sum_digits(digit * current_multiplier);
@@ -184,7 +184,7 @@ fn new_luhn_intermediary_with_u128(data: u128, skip: bool) -> Result<LuhnInterme
 }
 
 // sum_digits calculates the sum of the digits in a given number. (e.g. 13 = 4)
-fn sum_digits(n: i32) -> i32 {
+fn sum_digits(n: u32) -> u32 {
     let mut sum = 0;
     let mut n = n;
     while n > 0 {
@@ -195,7 +195,7 @@ fn sum_digits(n: i32) -> i32 {
 }
 
 // toggle_multiplier toggles the multiplier for the next digit.
-fn toggle_multiplier(n: i32) -> i32 {
+fn toggle_multiplier(n: u32) -> u32 {
     match n {
         2 => 1,
         _ => 2,

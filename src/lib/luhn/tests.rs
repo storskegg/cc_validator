@@ -55,10 +55,4 @@ mod tests {
         let result = toggle_multiplier(3);
         assert_eq!(result, 2);
     }
-
-    #[test]
-    fn toggle_multiplier_given_negative_one() {
-        let result = toggle_multiplier(-1);
-        assert_eq!(result, 2);
-    }
 }

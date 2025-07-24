@@ -17,3 +17,5 @@ name = "gen_luhn_numbers"
 path = "src/bin/gen_luhn_numbers/main.rs"
 
 [dependencies]
+
+[profile.release]
