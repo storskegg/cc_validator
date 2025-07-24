@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::fs;
+use std::fs::File;
 use std::io::{self, Write};
 
 const NUM_DIGITS: u16 = 16;
@@ -15,13 +15,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Ok(()); // TODO: <-- This is wrong, just moving on elsewhere at the moment.
     }
 
-    let mut out = io::BufWriter::new(fs::File::create("./out.csv")?);
+    let mut out = io::BufWriter::new(File::create("./out.csv")?);
 
     let mut last_number: u64 = 0;
     print!("Progress: {:>5.1}%", 0.0);
     for i in 0..QTY_NUMBERS {
         // learned dynamic padding here: https://stackoverflow.com/questions/69067436/how-do-i-make-the-fill-padding-in-stdformat-dynamic
-        let from: u64 = u64::from(start_number + i);
+        let from: u64 = start_number + i;
         let modulus: u32 = luhn::calculate_modulus_with_u64(from);
         let num: u64 = (from * 10) + u64::from(modulus);
         // println!("num   = '{: >width$}'", num, width = usize::from(NUM_DIGITS));
@@ -30,7 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         // println!("(num, delta) = '{: >width$?}'", (num, delta), width = usize::from(NUM_DIGITS));
         let _ = writeln!(out, "{}, {}", num, delta);
         last_number = num;
-        if i % ((QTY_NUMBERS + 1) / 1000) == 0 {
+        if i % (QTY_NUMBERS / 1000) == 0 {
             print!("\r\x1b[2KProgress: {:>5.1}% -- {}", (i as f64 / QTY_NUMBERS as f64) * 100.0, last_number);
             io::stdout().flush().unwrap();
         }
